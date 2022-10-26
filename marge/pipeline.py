@@ -32,7 +32,7 @@ class Pipeline(gitlab.Resource):
         return [cls(api, pipeline_info, project_id) for pipeline_info in pipelines_info]
 
     @classmethod
-    def pipelines_by_merge_request(cls, project_id, merge_request_iid, api):
+    def pipelines_by_merge_request(cls, project_id, merge_request_iid, api, status=None):
         """Fetch all pipelines for a merge request in descending order of pipeline ID."""
         pipelines_info = api.call(GET(
             '/projects/{project_id}/merge_requests/{merge_request_iid}/pipelines'.format(
@@ -40,6 +40,10 @@ class Pipeline(gitlab.Resource):
             )
         ))
         pipelines_info.sort(key=lambda pipeline_info: pipeline_info['id'], reverse=True)
+        if status is not None:
+            pipelines_info = filter(
+                lambda pipeline_info: pipeline_info['status'] == status, pipelines_info
+            )
         return [cls(api, pipeline_info, project_id) for pipeline_info in pipelines_info]
 
     @property

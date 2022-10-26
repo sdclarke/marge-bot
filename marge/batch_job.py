@@ -186,10 +186,10 @@ class BatchMergeJob(MergeJob):
         # At this point Gitlab should have recognised the MR as being accepted.
         log.info('Successfully merged MR !%s', merge_request.iid)
 
-        pipelines = Pipeline.pipelines_by_branch(
+        pipelines = Pipeline.pipelines_by_merge_request(
             api=self._api,
             project_id=merge_request.source_project_id,
-            branch=merge_request.source_branch,
+            merge_request_iid=merge_request.iid,
             status='running',
         )
         for pipeline in pipelines:
